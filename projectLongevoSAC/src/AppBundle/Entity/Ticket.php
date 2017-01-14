@@ -12,7 +12,8 @@ class Ticket {
 	
 	/**
 	 * @ORM\Id
-	 * @ORM\GeneratedValue
+	 * @ORM\GeneratedValue(strategy="SEQUENCE")
+	 * @ORM\SequenceGenerator(sequenceName="schema_name.moneda_moneda_id_seq", allocationSize=1,initialValue=5)
 	 * @ORM\Column(type="integer")
 	 */	
 	private $idTicket;
