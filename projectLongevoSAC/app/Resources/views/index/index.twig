@@ -1,0 +1,191 @@
+{% extends "layout/layout.twig" %}
+
+{% block title %}SAC - Pedido{% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid">
+	 <div class="link_superior"><a href="{{ path('admin') }}">Acesso restrito</a></div>
+	 <div class="row text-center">
+	    <div class="page-header">
+	       <a class="brand" href="#"><img src="assets/images/logo.png" width="200" /></a>            
+	       <h1>SAC Central de Ajuda - <small>Área de atendimento para dúvidas e suporte</small></h1>
+	    </div>
+	 </div>
+	 <div class="row">
+	    <div class="col-lg-7">  
+
+	    	{% if isSetTicket == 'success' %}
+			       <div class="alert alert-success">			           
+			          <h3><i class="fa fa fa-check-circle"></i>  Concluído. <strong>Ticket Nº {{ nTicket }}</strong>.</h3>
+			          <p>Um ticket foi aberto. Com este número em mãos, verifique na área ao lado a situação <strong> >>></strong></p>
+			          <div class="text-center"><hr /><a href="{{ path('index') }}"> Voltar para Index</a></div>
+			       </div>
+	        {% elseif isSetTicket == 'error' %}
+	       			<div class="alert alert-danger">			           
+			          <h3><i class="fa fa fa-check-circle"></i>  Erro</h3>
+			          <p>Ocorreu um erro ao cadastrar seu ticket. Por favor, tente mais uma vez.</p>
+			          <div class="text-center"><hr /><a href="{{ path('index') }}" class="text-center"> Voltar para Index</a></div>
+			       </div>
+			{% endif %}       
+
+	        <form action="{{ path('setTicket') }}" method="post">
+				
+				<h2>Formulário - <small>Use para cadastrar um chamado</small></h2>
+				<hr />
+				<label id="labelEmail">E-mail * <span id="validator_email" style="display: none" class='checked'><i class='fa fa fa-check-circle'></i></span></label>
+				<input id="idemail" name="input_email" type="email" class="input-block-level" placeholder="Informe o seu e-mail. E-mail cadastrado para teste: zeno@mail.com" required="required"> 
+
+				<div id="div_name_group" style="display:none;">
+					<div class="alert alert-info">
+					 	<button type="button" class="close" data-dismiss="alert">&times;</button>
+					 	<i class="fa fa-exclamation-triangle"></i> - <strong>E-mail não cadastrado</strong>, precisaremos que informe o seu nome.
+					</div>
+					<label>Nome *</label>
+					<input id="idname" name="input_name" type="text" class="input-block-level" placeholder="Informe o seu nome completo.">
+				</div>
+
+				<div id="div_alert_order" class="alert alert-danger" style="display: none;">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					<i class="fa fa-exclamation-triangle"></i> - <strong>Pedido inexistente, ou não digitado corretamente</strong>.<br /> <small>Atenção, os tickets disponíveis apenas para pedidos previamente cadastrados.</small>
+				</div>
+
+				<label id="labelPedido">Número do Pedido * <span id="validator_order" style="display: none" class='checked'><i class='fa fa fa-check-circle'></i></span></label>
+				<input id="idorder" name="input_order" type="text" class="input-block-level" placeholder="Código do seu pedido. Para testes, experimente: 555569 (cadastrado)">
+
+				<div id="div_step2" style="display: none;">
+					<label>Motivo *</label>
+					<select id="idselect" name="select_title" class="form-control" required="required" >
+						<option></option>
+						<option>Tive um problema X</option>
+						<option>Tive um problema Y</option>
+						<option>Tive um problema X e Y</option>
+					</select>
+					<label>Descrição <small>(campo opcional)</small></label>
+					<textarea id="iddescription" name="textarea_desc"></textarea>    
+					
+		          	<input type="submit" value="Enviar"> 
+	          	</div>      
+
+	          	<div id="div_step2" class="jumbotron">
+	          		<p class="lead">Só é possível criar um ticket se atender as etapas do formúlário. <br />
+	          		Isto inclui ter já realizado, ao menos, <strong>um pedido</strong> conosco. </p>
+	          	</div>
+
+	        </form>
+	       <hr />
+	    </div>
+	    <div class="col-lg-3">
+	       <div class="color6 area">
+	          <h3>Acompanhe seu chamado</h3>
+	          <hr />
+	          <form method="post" action="{{ path('isTicketExists') }}"  >
+		          <div class="input-group">
+		             <input type="text" name="number" class="form-control" placeholder="Digite o número do ticket" required="required">
+		             <span class="input-group-btn">
+		             	<button class="btn btn-default" type="submit">Verificar</button>
+		             </span>
+		          </div>
+	          </form>
+	          <br />
+
+			{% if isCheckOrder == 'solved' %}
+	          <div class="alert alert-success">
+	             <button type="button" class="close" data-dismiss="alert">&times;</button>
+	             <i class="fa fa fa-check-circle"></i> Resolvido! <br /><small>Seu ticket foi solucionado!</small>
+	          </div>
+	        {% elseif isCheckOrder == 'notsolved' %}  
+	          <div class="alert alert-info">
+	             <button type="button" class="close" data-dismiss="alert">&times;</button>
+	             <i class="fa fa fa-exclamation-triangle"></i> Aguardando tratativa. <br /><small>Seu ticket consta na lista de espera para ser tratado.</small>
+	          </div>
+			{% endif %}
+
+	       </div>
+	       <div class="color2 area">
+	          <h3>Atendimento</h3>
+	          <hr />
+	          <div class="box">
+	             <p><strong><i class="fa fa-envelope" aria-hidden="true"></i> E-mail</strong><br />
+	                Você pode enviar dúvidas diretamente por email:<br />
+	                <strong>sac@suporte.com</strong>
+	             </p>
+	          </div>
+	          <div class="box">
+	             <p><strong><i class="fa fa-question-circle" aria-hidden="true"></i> FAQ</strong><br />
+	                Consulte nossa lista de dúvidas frequentes.
+	             </p>
+	          </div>
+	          <div class="box2">
+	             <p>Fone para contato:<br />
+	                <span class="lead">(11) 9999-9999</span>
+	             </p>
+	          </div>
+	       </div>
+	    </div>
+	 </div>
+	</div>
+	<footer>
+	    <div>Longevo: Políticas Públicas e Tecnologia Aplicada, 2017</div>
+	</footer>
+
+{% endblock %}
+
+{% block script %}
+	<script type="text/javascript">
+			document.getElementById("idemail").addEventListener("blur", function()
+			{
+				ie = document.getElementById("idemail").value;			
+			    $.post('{{ path('isEmailExists') }}',               
+			                { data : ie }, 
+			            function(response)
+			            {
+			                    if(response.code == 100) 
+			                    {		                    	
+			                    	if(response.success) 
+			                    	{
+			                        	console.log('E-mail ESTÁ na base.');
+			                        	$("#validator_email").show();
+			                        	$("#div_name_group").hide();
+			                        	document.getElementById("idname").required = false;
+			                        } else 
+			                        {
+			                        	console.log('E-mail NÃO ESTÁ na base.');
+										$("#div_name_group").show();
+										$("#validator_email").hide();
+										document.getElementById("idname").required;
+			                        }	
+			                        console.log(response);
+			                    } 
+			    }, "json"); 			
+			});
+			document.getElementById("idorder").addEventListener("blur", function()
+			{
+				io = document.getElementById("idorder").value;			
+			    $.post('{{ path('isOrderExists') }}',               
+			                { data : io }, 
+			            function(response)
+			            {
+			                    if(response.code == 100) 
+			                    {		                    	
+			                    	if(response.success) 
+			                    	{
+			                        	console.log('Ordem EXISTENTE.');
+			                        	$("#validator_order").show();
+			                        	$("#div_alert_order").hide();
+			                        	$("#div_step2").show();
+			                        	$("#div_step2_info").hide();		                        	
+			                        } else 
+			                        {
+			                        	console.log('Ordem INEXISTENTE.');
+			                        	$("#validator_order").hide();
+										$("#div_alert_order").show();
+										$("#div_step2").hide();
+			                        	$("#div_step2_info").show();	
+			                        }	
+			                        console.log(response);
+			                    } 
+			    }, "json"); 			
+			});
+	</script>
+{% endblock %}

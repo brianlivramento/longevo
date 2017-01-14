@@ -1,0 +1,149 @@
+{% extends "layout/layout.twig" %}
+
+{% block title %}Administração SAC{% endblock %}
+
+{% block content %}
+
+	<div class="container-fluid">
+	 <div class="link_superior"><a href="{{ path('index') }}">Voltar Index</a></div>
+	 <div class="row text-center">
+	    <div class="page-header">
+	       <a class="brand" href="#"><img src="assets/images/logo.png" width="200" /></a>            
+	       <h1>Painel administrativo</h1>
+	    </div>
+	    <div class="bar">Usuário logado: <strong class="lead">{{ namesession }}</strong> - <a href="{{ path('logout')}}">Logout</a></div>
+	 </div>
+	 <div class="row">
+	    <div class="tabs">
+	       <ul class="nav nav-tabs" data-tabs="tabs">
+	          <li class="active"><a data-toggle="tab" href="#info_gerais">Informações Gerais</a></li>
+	          <li><a data-toggle="tab" href="#ger_pedidos">Controle de Pedidos</a></li>
+	       </ul>
+	       <div class="tab-content">
+	          <div class="tab-pane active" id="info_gerais">
+				<hr />
+				<div class="row jumbotron">
+					<p>Informações gerais sobre os tickets contidos na base de dados.</p>
+				</div>
+	             <div class="row contadores">
+	                <div class="col-lg-4">
+	                   <div class="col-lg-6">
+	                      <div class="box_count1">{{ register }}</div>
+	                   </div>
+	                   <div class="col-lg-6">
+	                      <div class="box_count_info">Pedidos registrados</div>
+	                   </div>
+	                </div>
+	                <div class="col-lg-4">
+	                   <div class="col-lg-6">
+	                      <div class="box_count2">{{ open }}</div>
+	                   </div>
+	                   <div class="col-lg-6">
+	                      <div class="box_count_info">Tickets abertos</div>
+	                   </div>
+	                </div>
+	                <div class="col-lg-4">
+	                   <div class="col-lg-6">
+	                      <div class="box_count3">{{ solved }}</div>
+	                   </div>
+	                   <div class="col-lg-6">
+	                      <div class="box_count_info">Resolvidos</div>
+	                   </div>
+	                </div>	                
+	             </div>
+	          </div>
+	          <div class="tab-pane" id="ger_pedidos">
+	             <div class="" style="margin-top: 20px;">
+	                <div class="row">
+	                    <div class="row jumbotron">
+							<p>Na área abaixo, é possível pesquisar pelo <strong>código do pedido</strong> e pelo <strong>email do usuário</strong>. 
+							<br /><small>Em ambos as pesquisas podem ser realizadas no mesmo campo.</small></p>
+						</div>	                   
+	                    <form action="{{ path('admin') }}" method="get">
+							<div class="col-lg-6">
+								<h2>Pesquisa rápida <small>(JavaScript, no próprio DOM)</small></h2>
+								<input type="text" id="inputDOM" onkeyup="searchDOM()" placeholder="Buscar...">
+							</div>	                   
+							<div class="col-lg-6">	                   		
+								<h2>Pesquisa avançada - <small> (com requisição ao banco)</small></h2>
+								<div class="col-lg-7">
+							 		<input type="text" name="filter_value" placeholder="Informe o termo a ser pesquisado">
+								</div>
+	                        	<div class="col-lg-5">		                      
+	                        		<input type="submit" value="Pesquisar">		                         
+	                        	</div>		                      
+                   		  	</div>                     		  	
+                   		  	<div class="col-lg-12">
+                   		  		{% if update == 'success' %}
+		                   		<div class="alert alert-success">		
+		                   			<button type="button" class="close" data-dismiss="alert">&times;</button>	           
+									<h3><i class="fa fa fa-check-circle"></i>  Ticket resolvido.</h3>
+								</div>  
+								{% endif %}
+                   				<button id="btn_clear" type="submit" value="">Limpar pesquisa</button>
+                   			</div>	
+		                </form>
+	                </div>
+	                <div class="row">
+	                   <h2>Resultados</h2>
+	                   <hr />
+	                   <form action="{{ path('updateTicket')}}"  method="get">
+		                   <table id="results" class="table table-bordered text-center">
+		                      <thead>
+		                         <tr>
+		                            <th>Usuário</th>
+		                            <th>Pedido código</th>
+		                            <th>Email</th>
+		                            <th>Ticket</th>
+		                            <th>Situação</th>
+		                         </tr>
+		                      </thead>
+		                      <tbody>	                      
+								
+								{% for l in list %}
+								<tr>
+									<td>{{ l.nameUser  }}</td>								
+									<td>{{ l.codOrder  }}</td>
+									<td>{{ l.emailUser  }}</td>
+									
+									{% if l.idTicket != null %}
+										<td><strong>Motivo</strong>: {{ l.titleTicket  }}, aberto em: <strong>{{ l.dateTicket|date("d/m/Y") }}</strong></td>
+										{% if l.statusTicket != true %}									
+											<td><button name="id_ticket"class="btn btn-primary btn-sm"
+											value="{{ l.idTicket }}">Resolver</button> </td>
+										{% else %}
+											<td class="solved">Resolvido em: <strong>{{ l.updateDateTicket|date("d/m/Y") }}</strong></td>
+										{% endif %}
+									{% else %}
+										 <td> não há ticket </td>
+		                            	 <td> - </td>											
+									{% endif %}
+								</tr>
+								{% endfor %} 
+
+		                      </tbody>
+		                   </table>
+	                   </form>
+	                   <div class="text-center">
+	                   	  <form id="form_pagination" action="{{ path('admin')}}">
+		                      <ul class="pagination">
+		                         <li><button class="btn btn-primary" name="pag" value="1">1</a></li>
+		                         <li><button class="btn btn-primary" name="pag" value="2">2</a></li>
+		                         <li><button class="btn btn-primary" name="pag" value="100">Mostrar todos</a></li>
+		                      </ul>
+	                      </form>
+	                   </div>
+	                </div>
+	             </div>
+	          </div>
+	       </div>
+	    </div>
+	 </div>
+	</div>
+
+{% endblock %}
+
+
+{% block script %}		
+	<script type="text/javascript" src="{{ asset('assets/js/admin.js') }}"></script>
+{% endblock %}

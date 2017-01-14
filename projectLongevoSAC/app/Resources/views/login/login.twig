@@ -1,0 +1,36 @@
+{% extends "layout/layout.twig" %}
+
+{% block title %}Login - Acesso restrito{% endblock %}
+
+{% block content %}
+
+<div class="container">
+ <div class="login">
+    <div class="text-center">
+       <a class="brand" href="#"><img src="assets/images/logo.png" width="200" /></a>
+       <h1>Acesso restrito</h1>
+    </div>
+    <form action="{{ path('loginValidator') }}" method="post" >
+            
+       {% if return == 'error' %}
+       <div class="alert alert-danger">
+          <i class="fa fa fa-exclamation-triangle"></i> Usuário ou senha incorretos.
+       </div>
+       {% elseif return == 'notlogin' %}
+       <div class="alert alert-info">
+          <i class="fa fa fa-exclamation-triangle"></i> Você não está logado. Por favor, efetue o login.
+       </div>
+       {% endif %}
+
+       <input type="text" name="username" placeholder="Usuário" required="required">
+       <input type="password" name="password" placeholder="Senha" required="required">
+       <input type="submit" value="Login">
+    </form>
+    <hr />
+    <a href="{{ path('index') }}">Voltar para SAC</a>
+ </div>
+</div>
+
+{% endblock %}
+
+{% block script %}{% endblock %}
